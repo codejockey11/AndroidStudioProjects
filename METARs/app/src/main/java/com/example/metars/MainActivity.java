@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
@@ -28,12 +27,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
     // counting each request as it comes back
     private int handlerWaitCount = 0;
-    private final int maxWaitHandlers = 3;
     private final double feetInMeters = 3.2808399;
 
     // making three handler requests on the looper thread
@@ -50,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private double altimeter;
 
     private boolean displayFormatted;
+
+    private static final Logger logger = Logger.getLogger(MainActivity.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText(textView.getText().toString().toUpperCase());
 
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                inputMethodManager.hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
 
                 handlerWaitCount = 0;
 
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (s != null)
             {
-                if (s.length() > 0)
+                if (!s.isEmpty())
                 {
                     stationIdent.setText(s);
 
@@ -131,8 +132,7 @@ public class MainActivity extends AppCompatActivity {
     @NonNull
     private Handler setupStationHandler(Looper looper) {
         return new Handler(looper) {
-            @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
 
                 if (msg.what == 2) {
@@ -142,9 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     // Need to post to the MainActivity's thread looper
                     // when the items created in that activity are being accessed
                     // (i.e. TextView or an EditText)
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        updateView();
-                    });
+                    new Handler(Looper.getMainLooper()).post(() -> updateView());
                 }
             }
         };
@@ -153,17 +151,14 @@ public class MainActivity extends AppCompatActivity {
     @NonNull
     private Handler setupMetarHandler(Looper looper) {
         return new Handler(looper) {
-            @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
 
                 if (msg.what == 2) {
                     metarBuilder = parseMetarInfo();
                     handlerWaitCount++;
 
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        updateView();
-                    });
+                    new Handler(Looper.getMainLooper()).post(() -> updateView());
                 }
             }
         };
@@ -172,17 +167,14 @@ public class MainActivity extends AppCompatActivity {
     @NonNull
     private Handler setupTafHandler(Looper looper) {
         return new Handler(looper) {
-            @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
 
                 if (msg.what == 2) {
                     tafBuilder = parseTafInfo();
                     handlerWaitCount++;
 
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        updateView();
-                    });
+                    new Handler(Looper.getMainLooper()).post(() -> updateView());
                 }
             }
         };
@@ -195,7 +187,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             factory = XmlPullParserFactory.newInstance();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return;
         }
 
@@ -205,14 +198,16 @@ public class MainActivity extends AppCompatActivity {
         try {
             xpp = factory.newPullParser();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return;
         }
 
         try {
             xpp.setInput(new StringReader(stationHttpRequester.buffer));
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return;
         }
 
@@ -223,7 +218,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             eventType = xpp.getEventType();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return;
         }
 
@@ -234,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case XmlPullParser.START_TAG: {
                     name = xpp.getName();
-
                     break;
                 }
                 case XmlPullParser.TEXT: {
@@ -277,7 +272,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     } catch (XmlPullParserException e) {
-                        e.printStackTrace();
+                        logger.severe("An error occurred:");
+                        logger.severe(e.toString());
                         return;
                     }
                     break;
@@ -299,9 +295,11 @@ public class MainActivity extends AppCompatActivity {
             try {
                 eventType = xpp.next();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.severe("An error occurred:");
+                logger.severe(e.toString());
             } catch (XmlPullParserException e) {
-                e.printStackTrace();
+                logger.severe("An error occurred:");
+                logger.severe(e.toString());
                 return;
             }
         }
@@ -315,7 +313,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             factory = XmlPullParserFactory.newInstance();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return null;
         }
 
@@ -325,14 +324,16 @@ public class MainActivity extends AppCompatActivity {
         try {
             xpp = factory.newPullParser();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return null;
         }
 
         try {
             xpp.setInput(new StringReader(metarHttpRequester.buffer));
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return null;
         }
 
@@ -341,7 +342,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             eventType = xpp.getEventType();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return null;
         }
 
@@ -573,7 +575,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     } catch (XmlPullParserException e) {
-                        e.printStackTrace();
+                        logger.severe("An error occurred:");
+                        logger.severe(e.toString());
                         return null;
                     }
 
@@ -583,9 +586,11 @@ public class MainActivity extends AppCompatActivity {
             try {
                 eventType = xpp.next();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.severe("An error occurred:");
+                logger.severe(e.toString());
             } catch (XmlPullParserException e) {
-                e.printStackTrace();
+                logger.severe("An error occurred:");
+                logger.severe(e.toString());
                 return null;
             }
         }
@@ -601,7 +606,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             factory = XmlPullParserFactory.newInstance();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return sb;
         }
 
@@ -611,14 +617,16 @@ public class MainActivity extends AppCompatActivity {
         try {
             xpp = factory.newPullParser();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return sb;
         }
 
         try {
             xpp.setInput(new StringReader(tafHttpRequester.buffer));
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return sb;
         }
 
@@ -627,7 +635,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             eventType = xpp.getEventType();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred:");
+            logger.severe(e.toString());
             return sb;
         }
 
@@ -747,7 +756,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     } catch (XmlPullParserException e) {
-                        e.printStackTrace();
+                        logger.severe("An error occurred:");
+                        logger.severe(e.toString());
                     }
 
                     break;
@@ -756,9 +766,11 @@ public class MainActivity extends AppCompatActivity {
             try {
                 eventType = xpp.next();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.severe("An error occurred:");
+                logger.severe(e.toString());
             } catch (XmlPullParserException e) {
-                e.printStackTrace();
+                logger.severe("An error occurred:");
+                logger.severe(e.toString());
                 return sb;
             }
         }
@@ -768,6 +780,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateView() {
         // making sure that all requests have completed before updating the UI
+        int maxWaitHandlers = 3;
         if (handlerWaitCount != maxWaitHandlers) {
             return;
         }
@@ -789,7 +802,7 @@ public class MainActivity extends AppCompatActivity {
 
             str += String.format(Locale.ENGLISH, "\n\nAltitude:%.2f", station.elevation_m * feetInMeters);
 
-            if (metarBuilder.toString().length() > 0) {
+            if (!metarBuilder.toString().isEmpty()) {
                 str += FormatAtmosphereData();
             }
 
@@ -799,7 +812,7 @@ public class MainActivity extends AppCompatActivity {
 
             str += String.format(Locale.ENGLISH, "\n\nAltitude:%.2f", station.elevation_m * feetInMeters);
 
-            if (metarBuilder.toString().length() > 0) {
+            if (!metarBuilder.toString().isEmpty()) {
                 str += FormatAtmosphereData();
             }
         }
