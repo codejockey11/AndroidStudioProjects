@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeFragment">
+
+    <ImageButton
+        android:id="@+id/button_ic_media_previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="65dp"
+        android:contentDescription="@+string/button_ic_media_previous"
+        android:src="@android:drawable/ic_media_previous"
+        app:layout_constraintEnd_toStartOf="@+id/button_ic_media_rew"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_media_playing" />
+
+    <ImageButton
+        android:id="@+id/button_ic_media_rew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@+string/button_ic_media_rew"
+        android:src="@android:drawable/ic_media_rew"
+        app:layout_constraintEnd_toStartOf="@+id/button_ic_media_play"
+        app:layout_constraintStart_toEndOf="@+id/button_ic_media_previous"
+        app:layout_constraintTop_toBottomOf="@+id/text_media_playing" />
+
+    <ImageButton
+        android:id="@+id/button_ic_media_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@+string/button_ic_media_play"
+        android:src="@android:drawable/ic_media_play"
+        app:layout_constraintEnd_toStartOf="@+id/button_ic_media_ff"
+        app:layout_constraintStart_toEndOf="@+id/button_ic_media_rew"
+        app:layout_constraintTop_toBottomOf="@+id/text_media_playing" />
+
+    <ImageButton
+        android:id="@+id/button_ic_media_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@+string/button_ic_media_pause"
+        android:src="@android:drawable/ic_media_pause"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/button_ic_media_ff"
+        app:layout_constraintStart_toEndOf="@+id/button_ic_media_rew"
+        app:layout_constraintTop_toBottomOf="@+id/text_media_playing" />
+
+    <ImageButton
+        android:id="@+id/button_ic_media_ff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@+string/button_ic_media_ff"
+        android:src="@android:drawable/ic_media_ff"
+        app:layout_constraintStart_toEndOf="@+id/button_ic_media_play"
+        app:layout_constraintTop_toBottomOf="@+id/text_media_playing" />
+
+    <ImageButton
+        android:id="@+id/button_ic_media_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@+string/button_ic_media_next"
+        android:src="@android:drawable/ic_media_next"
+        app:layout_constraintStart_toEndOf="@+id/button_ic_media_ff"
+        app:layout_constraintTop_toBottomOf="@+id/text_media_playing" />
+
+    <TextView
+        android:id="@+id/text_media_playing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="168dp"
+        android:autofillHints="Song Title"
+        android:ems="10"
+        android:textAlignment="center"
+        android:hint="@string/text_media_playing"
+        android:minHeight="48dp"
+        android:text="@string/text_media_playing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_time_remaining"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:ems="10"
+        android:textAlignment="center"
+        android:minHeight="48dp"
+        android:text="@string/text_time_remaining"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_ic_media_play" />
+
+    <Button
+        android:id="@+id/button_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_time_remaining" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
