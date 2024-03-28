@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.STORAGE" />
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:required="true" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" android:required="true" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:required="true"/>
 
     <application
         android:requestLegacyExternalStorage="true"

@@ -1,10 +1,16 @@
 package com.example.audioplayer;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -19,6 +25,7 @@ import java.util.Locale;
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding mBinding;
     private ActivityViewModel mActivityViewModel;
+    private BroadcastReceiver mBroadcastReceiver;
     private CountDownTimer mCountDownTimer;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -29,55 +36,12 @@ public class HomeFragment extends Fragment {
         mBinding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = mBinding.getRoot();
 
-        if (!mActivityViewModel.mMediaPlayer.isPlaying()) {
-            if (!mActivityViewModel.mAudioList.mUris.isEmpty()) {
-                if(mActivityViewModel.mItemSelected) {
-                    try {
-                        mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
-                        mActivityViewModel.mMediaPlayer.reset();
-                        mActivityViewModel.mMediaPlayer.setDataSource(mActivityViewModel.mAudioList.mUris.get(mActivityViewModel.mCurrentlyPlaying));
-                    } catch (IOException e) {
-                        LogError(e);
-                    }
+        AttachBluetoothReceiver();
 
-                    try {
-                        mActivityViewModel.mMediaPlayer.prepare();
-                    } catch (IOException e) {
-                        LogError(e);
-                    }
-
-                    StartPlayer();
-                } else {
-                    TogglePlayPause(View.INVISIBLE);
-                    mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
-                    StartCountdown();
-                }
-            }
-        } else {
-            TogglePlayPause(View.INVISIBLE);
-            mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
-            StartCountdown();
-        }
+        CheckReturning();
 
         mBinding.buttonIcMediaPrevious.setOnClickListener(view -> {
-            if (!mActivityViewModel.mAudioList.mUris.isEmpty()) {
-                try {
-                    mActivityViewModel.DecrementCurrentlyPlaying();
-                    mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
-                    mActivityViewModel.mMediaPlayer.reset();
-                    mActivityViewModel.mMediaPlayer.setDataSource(mActivityViewModel.mAudioList.mUris.get(mActivityViewModel.mCurrentlyPlaying));
-                } catch (IOException e) {
-                    LogError(e);
-                }
-
-                try {
-                    mActivityViewModel.mMediaPlayer.prepare();
-                } catch (IOException e) {
-                    LogError(e);
-                }
-
-                StartPlayer();
-            }
+            PreviousTrack();
         });
 
         mBinding.buttonIcMediaRew.setOnClickListener(view -> {
@@ -87,12 +51,12 @@ public class HomeFragment extends Fragment {
         });
 
         mBinding.buttonIcMediaPause.setOnClickListener(view -> {
-            TogglePlayPause(View.VISIBLE);
-            mActivityViewModel.mMediaPlayer.pause();
+            PlayPause();
         });
 
-        mBinding.buttonIcMediaPlay.setOnClickListener(view ->
-                StartPlayer());
+        mBinding.buttonIcMediaPlay.setOnClickListener(view -> {
+            PlayPause();
+        });
 
         mBinding.buttonIcMediaFf.setOnClickListener(view -> {
             if (!mActivityViewModel.mAudioList.mUris.isEmpty()) {
@@ -101,55 +65,16 @@ public class HomeFragment extends Fragment {
         });
 
         mBinding.buttonIcMediaNext.setOnClickListener(view -> {
-            if (!mActivityViewModel.mAudioList.mUris.isEmpty()) {
-                try {
-                    mActivityViewModel.IncrementCurrentlyPlaying();
-                    mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
-                    mActivityViewModel.mMediaPlayer.reset();
-                    mActivityViewModel.mMediaPlayer.setDataSource(mActivityViewModel.mAudioList.mUris.get(mActivityViewModel.mCurrentlyPlaying));
-                } catch (IOException e) {
-                    LogError(e);
-                }
-
-                try {
-                    mActivityViewModel.mMediaPlayer.prepare();
-                } catch (IOException e) {
-                    LogError(e);
-                }
-
-                StartPlayer();
-            }
+            NextTrack();
         });
 
         mActivityViewModel.mMediaPlayer.setOnCompletionListener(mediaPlayer -> {
-            try {
-                mActivityViewModel.IncrementCurrentlyPlaying();
-                mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
-                mActivityViewModel.mMediaPlayer.reset();
-                mActivityViewModel.mMediaPlayer.setDataSource(mActivityViewModel.mAudioList.mUris.get(mActivityViewModel.mCurrentlyPlaying));
-            } catch (IOException e) {
-                LogError(e);
-            }
-            try {
-                mActivityViewModel.mMediaPlayer.prepare();
-            } catch (IOException e) {
-                LogError(e);
-            }
-
-            StartPlayer();
+            NextTrack();
         });
 
         mBinding.buttonExit.setOnClickListener(view -> {
-                    if (mActivityViewModel.mMediaPlayer.isPlaying()) {
-                        mActivityViewModel.mMediaPlayer.stop();
-                        mActivityViewModel.mMediaPlayer.reset();
-                    }
-
-                    mActivityViewModel.mMediaPlayer.release();
-
-                    getActivity().finish();
-                }
-        );
+            Exit();
+        });
 
         return root;
     }
@@ -161,6 +86,142 @@ public class HomeFragment extends Fragment {
             mCountDownTimer.cancel();
         }
         mBinding = null;
+    }
+
+    private void Exit() {
+        if (mActivityViewModel.mMediaPlayer.isPlaying()) {
+            mActivityViewModel.mMediaPlayer.stop();
+            mActivityViewModel.mMediaPlayer.reset();
+        }
+
+        mActivityViewModel.mMediaPlayer.release();
+
+        getActivity().finish();
+    }
+
+    private void AttachBluetoothReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction() != Intent.ACTION_MEDIA_BUTTON) {
+                    return;
+                }
+
+                KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+
+                switch (keyEvent.getKeyCode()) {
+                    case KeyEvent.KEYCODE_MEDIA_PREVIOUS: {
+                        Toast.makeText(mBinding.getRoot().getContext(), "KEYCODE_MEDIA_PREVIOUS", Toast.LENGTH_LONG).show();
+                        PreviousTrack();
+                        break;
+                    }
+                    case KeyEvent.KEYCODE_MEDIA_PLAY:
+                    case KeyEvent.KEYCODE_MEDIA_PAUSE: {
+                        Toast.makeText(mBinding.getRoot().getContext(), "KEYCODE_MEDIA_PLAY_PAUSE", Toast.LENGTH_LONG).show();
+                        PlayPause();
+                        break;
+                    }
+                    case KeyEvent.KEYCODE_MEDIA_NEXT: {
+                        Toast.makeText(mBinding.getRoot().getContext(), "KEYCODE_MEDIA_NEXT", Toast.LENGTH_LONG).show();
+                        NextTrack();
+                        break;
+                    }
+                }
+            }
+        };
+    }
+
+    private void CheckReturning() {
+        if (mActivityViewModel.mMediaPlayer.isPlaying()) {
+            TogglePlayPause(View.INVISIBLE);
+            mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
+            StartCountdown();
+
+            return;
+        }
+
+        if (mActivityViewModel.mAudioList.mUris.isEmpty()) {
+            return;
+        }
+
+        if (!mActivityViewModel.mItemSelected) {
+            if (!mActivityViewModel.mAudioList.mUris.isEmpty()) {
+                return;
+            }
+
+            TogglePlayPause(View.INVISIBLE);
+            mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
+            StartCountdown();
+
+            return;
+        }
+
+        try {
+            mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
+            mActivityViewModel.mMediaPlayer.reset();
+            mActivityViewModel.mMediaPlayer.setDataSource(mActivityViewModel.mAudioList.mUris.get(mActivityViewModel.mCurrentlyPlaying));
+        } catch (IOException e) {
+            LogError(e);
+        }
+
+        try {
+            mActivityViewModel.mMediaPlayer.prepare();
+        } catch (IOException e) {
+            LogError(e);
+        }
+
+        StartPlayer();
+    }
+
+    private void PreviousTrack() {
+        if (!mActivityViewModel.mAudioList.mUris.isEmpty()) {
+            try {
+                mActivityViewModel.DecrementCurrentlyPlaying();
+                mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
+                mActivityViewModel.mMediaPlayer.reset();
+                mActivityViewModel.mMediaPlayer.setDataSource(mActivityViewModel.mAudioList.mUris.get(mActivityViewModel.mCurrentlyPlaying));
+            } catch (IOException e) {
+                LogError(e);
+            }
+
+            try {
+                mActivityViewModel.mMediaPlayer.prepare();
+            } catch (IOException e) {
+                LogError(e);
+            }
+
+            StartPlayer();
+        }
+    }
+
+    private void PlayPause() {
+        if (mActivityViewModel.mMediaPlayer.isPlaying()) {
+            TogglePlayPause(View.VISIBLE);
+            mActivityViewModel.mMediaPlayer.pause();
+            return;
+        }
+
+        StartPlayer();
+    }
+
+    private void NextTrack() {
+        if (!mActivityViewModel.mAudioList.mUris.isEmpty()) {
+            try {
+                mActivityViewModel.IncrementCurrentlyPlaying();
+                mBinding.textMediaPlaying.setText(mActivityViewModel.mAudioList.mAudios.get(mActivityViewModel.mCurrentlyPlaying));
+                mActivityViewModel.mMediaPlayer.reset();
+                mActivityViewModel.mMediaPlayer.setDataSource(mActivityViewModel.mAudioList.mUris.get(mActivityViewModel.mCurrentlyPlaying));
+            } catch (IOException e) {
+                LogError(e);
+            }
+
+            try {
+                mActivityViewModel.mMediaPlayer.prepare();
+            } catch (IOException e) {
+                LogError(e);
+            }
+
+            StartPlayer();
+        }
     }
 
     private void TogglePlayPause(int visibility) {
