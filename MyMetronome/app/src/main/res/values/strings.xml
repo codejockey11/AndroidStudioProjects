@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">MyMetronome</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="bpmDown">Down</string>
+    <string name="bpmUp">Up</string>
+    <string name="bpm">76</string>
+    <string name="_20">20</string>
+    <string name="_40">40</string>
+    <string name="_60">60</string>
+    <string name="_66">66</string>
+    <string name="_76">76</string>
+    <string name="_108">108</string>
+    <string name="_112">112</string>
+    <string name="_120">120</string>
+    <string name="_168">168</string>
+    <string name="sounds">Sounds</string>
+    <string name="click1">click1</string>
+    <string name="click2">click2</string>
+    <string name="click3">click3</string>
+    <string name="click4">click4</string>
+    <string name="click5">click5</string>
+</resources>

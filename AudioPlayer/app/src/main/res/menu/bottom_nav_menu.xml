@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_player"
+        android:icon="@drawable/baseline_audiotrack_24"
+        android:title="@string/title_player" />
+
+    <item
+        android:id="@+id/navigation_playlist"
+        android:icon="@drawable/baseline_list_24"
+        android:title="@string/title_playlist" />
+
+    <item
+        android:id="@+id/navigation_media_filter"
+        android:icon="@drawable/ic_filter"
+        android:title="@string/title_media_filter" />
+
+    <item
+        android:id="@+id/navigation_media_list"
+        android:icon="@drawable/baseline_audio_file_24"
+        android:title="@string/title_media_list" />
+
+</menu>

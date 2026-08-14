@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/click1"
+        android:title="@string/click1"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/click2"
+        android:title="@string/click2"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/click3"
+        android:title="@string/click3"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/click4"
+        android:title="@string/click4"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/click5"
+        android:title="@string/click5"
+        app:showAsAction="never" />
+
+</menu>

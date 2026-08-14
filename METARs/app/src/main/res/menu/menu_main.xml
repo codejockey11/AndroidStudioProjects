@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.metars.MainActivity">
+
+    <item
+        android:id="@+id/type_save_station"
+        android:title="@string/save_station" />
+
+    <item
+        android:id="@+id/type_raw"
+        android:title="@string/type_raw" />
+
+    <item
+        android:id="@+id/type_formatted"
+        android:title="@string/type_formatted" />
+
+</menu>
