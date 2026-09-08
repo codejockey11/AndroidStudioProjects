@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PlayerFragment">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60sp"
+        app:layout_constraintBottom_toTopOf="@id/media_buttons">
+
+        <TextView
+            android:id="@+id/text_media_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Artist"
+            android:fontFamily="@font/cantarell_bold"
+            android:hint="@string/text_media_artist"
+            android:text="@string/text_media_artist"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/text_media_album" />
+
+        <TextView
+            android:id="@+id/text_media_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Album"
+            android:fontFamily="@font/cantarell_bold"
+            android:hint="@string/text_media_album"
+            android:text="@string/text_media_album"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/text_media_title" />
+
+        <TextView
+            android:id="@+id/text_media_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Song Title"
+            android:fontFamily="@font/cantarell_bold"
+            android:hint="@string/text_media_playing"
+            android:text="@string/text_media_playing"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/media_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button_exit"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/button_ic_media_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:contentDescription="@+string/button_ic_media_previous"
+            android:src="@android:drawable/ic_media_previous" />
+
+        <ImageButton
+            android:id="@+id/button_ic_media_rew"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@+string/button_ic_media_rew"
+            android:src="@android:drawable/ic_media_rew" />
+
+        <ImageButton
+            android:id="@+id/button_ic_media_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@+string/button_ic_media_play"
+            android:src="@android:drawable/ic_media_play" />
+
+        <ImageButton
+            android:id="@+id/button_ic_media_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:layout_marginStart="-57dp"
+            android:contentDescription="@+string/button_ic_media_pause"
+            android:src="@android:drawable/ic_media_pause"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/button_ic_media_ff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@+string/button_ic_media_ff"
+            android:src="@android:drawable/ic_media_ff" />
+
+        <ImageButton
+            android:id="@+id/button_ic_media_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@+string/button_ic_media_next"
+            android:src="@android:drawable/ic_media_next" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_time_remaining"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cantarell_bold"
+        android:text="@string/text_time_remaining"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:layout_marginTop="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/media_buttons" />
+
+    <TextView
+        android:id="@+id/text_active_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cantarell_bold"
+        android:text="@string/text_active_playlist"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:layout_marginTop="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_time_remaining" />
+
+    <Button
+        android:id="@+id/button_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="96dp"
+        android:fontFamily="@font/cantarell_bold"
+        android:text="@string/exit"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

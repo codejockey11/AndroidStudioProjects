@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/button_row"
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/button_move_up"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10sp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="@string/move_up"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/button_move_down"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10sp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="@string/move_down"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/button_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10sp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:text="@string/delete"
+            style="?android:attr/buttonBarButtonStyle" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/list_artist_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_row"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/list_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="150sp"
+            android:maxWidth="150sp"
+            android:fontFamily="@font/cantarell_bold"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/list_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="150sp"
+            android:maxWidth="150sp"
+            android:fontFamily="@font/cantarell_bold"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/list_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cantarell_bold"
+        android:textSize="20sp"
+        android:layout_below="@id/list_artist_row" />
+
+</RelativeLayout>
